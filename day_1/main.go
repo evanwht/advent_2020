@@ -208,10 +208,29 @@ var charges = []int{
 }
 
 func main() {
+	challenge2()
+}
+
+func challenge1() {
 	for i, num1 := range charges {
 		for _, num2 := range charges[i:] {
 			if num1+num2 == 2020 {
 				fmt.Print(num1 * num2)
+				return
+			}
+		}
+	}
+}
+
+func challenge2() {
+	for i, num1 := range charges {
+		for j, num2 := range charges[i+1:] {
+			for _, num3 := range charges[j+1:] {
+				if num1+num2+num3 == 2020 {
+					fmt.Printf("%d * %d * %d\n", num1, num2, num3)
+					fmt.Println(num1 * num2 * num3)
+					return
+				}
 			}
 		}
 	}
