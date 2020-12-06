@@ -25,7 +25,7 @@ func challenge1() {
 		parts := strings.Split(str, ":")
 		rule := parseRule(parts[0])
 		pass := strings.TrimSpace(parts[1])
-		if checkPassword(pass, rule) {
+		if checkPassword2(pass, rule) {
 			valid++
 		}
 	}
@@ -61,6 +61,12 @@ func checkPassword(password string, rule Rule) bool {
 		}
 	}
 	return count >= rule.least
+}
+
+func checkPassword2(password string, rule Rule) bool {
+	first := rule.least <= len(password) && password[rule.least-1] == rule.letter
+	second := rule.most <= len(password) && password[rule.most-1] == rule.letter
+	return (first || second) && !(first && second)
 }
 
 func check(err error) {
