@@ -13,7 +13,7 @@ func main() {
 }
 
 func challenge1() {
-	file, err := os.Open("day_2.txt")
+	file, err := os.Open("input.txt")
 	check(err)
 
 	defer file.Close()
