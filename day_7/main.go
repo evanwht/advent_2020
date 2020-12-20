@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -18,44 +19,60 @@ func main() {
 	ruleSet := make(map[string]*Node)
 	for scanner.Scan() {
 		rule := scanner.Text()
-		parts := strings.Split(rule, "contain")
+		parts := strings.Split(rule, " contain ")
 		color := parts[0][:strings.Index(parts[0], " bags")]
-		rules := strings.Split(parts[1], ",")
+		rules := strings.Split(parts[1], ", ")
 		node, ok := ruleSet[color]
 		if !ok {
 			node = &Node{
 				color:    color,
+				children: make(map[*Node]int),
 			}
 		}
 		ruleSet[color] = node
 		for _, r := range rules {
 			if !strings.Contains(r, "no other bags") {
-				rColor := r[3:strings.Index(r, " bag")]
+				count, err := strconv.Atoi(r[:1])
+				util.Check(err)
+				rColor := r[2:strings.Index(r, " bag")]
 				if n, ok := ruleSet[rColor]; ok {
 					n.parents = append(n.parents, node)
-					node.children = append(node.children, n)
+					node.children[n] = count
 				} else {
 					n = &Node{
 						color:   rColor,
 						parents: []*Node{node},
+						children: make(map[*Node]int),
 					}
 					ruleSet[rColor] = n
-					node.children = append(node.children, n)
+					node.children[n] = count
 				}
 			}
 		}
 	}
-	fmt.Println(getCount(ruleSet, ruleSet["shiny gold"].parents))
+	fmt.Println(getContainedCount(ruleSet, ruleSet["shiny gold"].parents))
+	fmt.Println(getContainingCount(ruleSet, "shiny gold"))
 }
 
-func getCount(ruleSet map[string]*Node, nodes []*Node) int {
+func getContainedCount(ruleSet map[string]*Node, nodes []*Node) int {
 	c := 0
 	for _, n := range nodes {
 		if r, ok := ruleSet[n.color]; ok && !r.counted {
 			c++
 			r.counted = true
 		}
-		c += getCount(ruleSet, n.parents)
+		c += getContainedCount(ruleSet, n.parents)
+	}
+	return c
+}
+
+func getContainingCount(ruleSet map[string]*Node, color string) int {
+	c := 0
+	if rule, ok := ruleSet[color]; ok {
+		for n, i := range rule.children {
+			c += i
+			c += i * getContainingCount(ruleSet, n.color)
+		}
 	}
 	return c
 }
@@ -63,6 +80,6 @@ func getCount(ruleSet map[string]*Node, nodes []*Node) int {
 type Node struct {
 	counted bool
 	color string
-	children []*Node
+	children map[*Node]int
 	parents []*Node
 }
