@@ -22,7 +22,7 @@ func main() {
 	}
 	sort.Ints(ids)
 	for i, id := range ids {
-		if ids[i+1] == id+2 {
+		if i < len(ids)-1 && ids[i+1] == id+2 {
 			fmt.Println(id+1)
 		}
 	}
@@ -35,39 +35,21 @@ func getSeatId(str string) int {
 }
 
 func getRow(rows string) int {
-	row := 63.5
+	row := 0
 	for i, r := range rows {
-		var change float64
-		if i < len(rows) - 1 {
-			shift := 32 >> i
-			change = float64(shift)
-		} else {
-			change = 0.5
-		}
-		if r == 'F' {
-			row -= change
-		} else {
-			row += change
+		if r == 'B' {
+			row |= 1 << (len(rows) - (i+1))
 		}
 	}
-	return int(row)
+	return row
 }
 
 func getSeat(seats string) int {
-	seat := 3.5
+	seat := 0
 	for i, s := range seats {
-		var change float64
-		if i < len(seats) - 1 {
-			shift := 2 >> i
-			change = float64(shift)
-		} else {
-			change = 0.5
-		}
-		if s == 'L' {
-			seat -= change
-		} else {
-			seat += change
+		if s == 'R' {
+			seat |= 1 << (len(seats) - (i+1))
 		}
 	}
-	return int(seat)
+	return seat
 }
