@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
 
 func main() {
@@ -14,14 +15,17 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	maxSeatId := 0
+	var ids []int
 	for scanner.Scan() {
 		str := scanner.Text()
-		if id := getSeatId(str); id > maxSeatId {
-			maxSeatId = id
+		ids = append(ids, getSeatId(str))
+	}
+	sort.Ints(ids)
+	for i, id := range ids {
+		if ids[i+1] == id+2 {
+			fmt.Println(id+1)
 		}
 	}
-	fmt.Printf("max seat id: %d", maxSeatId)
 }
 
 func getSeatId(str string) int {
@@ -31,13 +35,14 @@ func getSeatId(str string) int {
 }
 
 func getRow(rows string) int {
-	row := 63
+	row := 63.5
 	for i, r := range rows {
-		var change int
+		var change float64
 		if i < len(rows) - 1 {
-			change = 32 >> i
+			shift := 32 >> i
+			change = float64(shift)
 		} else {
-			change = 1
+			change = 0.5
 		}
 		if r == 'F' {
 			row -= change
@@ -45,17 +50,18 @@ func getRow(rows string) int {
 			row += change
 		}
 	}
-	return row
+	return int(row)
 }
 
 func getSeat(seats string) int {
-	seat := 4
+	seat := 3.5
 	for i, s := range seats {
-		var change int
+		var change float64
 		if i < len(seats) - 1 {
-			change = 2 >> i
+			shift := 2 >> i
+			change = float64(shift)
 		} else {
-			change = 1
+			change = 0.5
 		}
 		if s == 'L' {
 			seat -= change
@@ -63,5 +69,5 @@ func getSeat(seats string) int {
 			seat += change
 		}
 	}
-	return seat
+	return int(seat)
 }
