@@ -23,18 +23,26 @@ func main() {
 
 func readGroup(scanner *bufio.Scanner) int {
 	scanner.Scan()
-	t, counts := scanner.Text(), make(map[int32]struct{})
+	t, counts, group, count := scanner.Text(), make(map[int32]int), 0, 0
 	for t != "" {
+
 		// add this so we can see when readGroup didn't read
-		counts[0] = struct{}{}
+		count=1
+		counts[0] = 0
 
 		for _, c := range t {
-			counts[c] = struct{}{}
+			counts[c]++
 		}
 
+		group++
 		scanner.Scan()
 		t = scanner.Text()
 	}
-	return len(counts) - 1
+	for _, c := range counts {
+		if c == group {
+			count++
+		}
+	}
+	return count - 1
 }
 
