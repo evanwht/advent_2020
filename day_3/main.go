@@ -2,9 +2,7 @@ package main
 
 import (
 	"advent_2020/util"
-	"bufio"
 	"fmt"
-	"os"
 )
 
 func main() {
@@ -30,14 +28,8 @@ func numTrees(treeMap [][]byte, slopeX int, slopeY int) int {
 }
 
 func readMap() (treeMap [][]byte) {
-	file, err := os.Open("input.txt")
-	util.Check(err)
-
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		treeMap = append(treeMap, []byte(scanner.Text()))
-	}
+	util.ForEachLine("input.txt", func(str string) {
+		treeMap = append(treeMap, []byte(str))
+	})
 	return treeMap
 }

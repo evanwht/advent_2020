@@ -2,24 +2,15 @@ package main
 
 import (
 	"advent_2020/util"
-	"bufio"
 	"fmt"
-	"os"
 	"sort"
 )
 
 func main() {
-	file, err := os.Open("day_5/input.txt")
-	util.Check(err)
-
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
 	var ids []int
-	for scanner.Scan() {
-		str := scanner.Text()
+	util.ForEachLine("day_5/input.txt", func(str string) {
 		ids = append(ids, getSeatId(str))
-	}
+	})
 	sort.Ints(ids)
 	for i, id := range ids {
 		if i < len(ids)-1 && ids[i+1] == id+2 {

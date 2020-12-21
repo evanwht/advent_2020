@@ -2,23 +2,14 @@ package main
 
 import (
 	"advent_2020/util"
-	"bufio"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	file, err := os.Open("day_7/input.txt")
-	util.Check(err)
-
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
 	nodeMap := NodeMap{nodes: make(map[string]*Node)}
-	for scanner.Scan() {
-		rule := scanner.Text()
+	util.ForEachLine("day_7/input.txt", func(rule string) {
 		parts := strings.Split(rule, " contain ")
 		color := strings.Replace(parts[0], " bags", "", 1)
 		node := nodeMap.getOrAdd(color)
@@ -34,7 +25,7 @@ func main() {
 				node.children[n] = count
 			}
 		}
-	}
+	})
 	fmt.Println(nodeMap.getContainedCount("shiny gold"))
 	fmt.Println(nodeMap.getContainingCount("shiny gold"))
 }

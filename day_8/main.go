@@ -2,9 +2,7 @@ package main
 
 import (
 	"advent_2020/util"
-	"bufio"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -29,16 +27,15 @@ const (
 )
 
 func main() {
-	file, err := os.Open("day_8/input.txt")
-	util.Check(err)
+	//challenge1()
+	challenge2()
+}
 
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
+func challenge1() {
 	var instructions []*instruction
-	for scanner.Scan() {
-		instructions = append(instructions, newInstruction(scanner.Text()))
-	}
+	util.ForEachLine("day_8/input.txt", func(str string) {
+		instructions = append(instructions, newInstruction(str))
+	})
 	set := instructionSet{
 		instructions: instructions,
 	}
@@ -56,12 +53,12 @@ func (set *instructionSet) execute(i int) int {
 	inst.executed = true
 	switch inst.op {
 	case jmp:
-		set.execute(i + inst.val)
+		set.execute(i+inst.val)
 	case acc:
 		set.accumulator += inst.val
-		set.execute(i + 1)
+		set.execute(i+1)
 	default:
-		set.execute(i + 1)
+		set.execute(i+1)
 	}
 	return set.accumulator
 }

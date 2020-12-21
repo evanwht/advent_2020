@@ -1,9 +1,8 @@
 package main
 
 import (
-	"bufio"
+	"advent_2020/util"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -13,22 +12,15 @@ func main() {
 }
 
 func challenge1() {
-	file, err := os.Open("input.txt")
-	check(err)
-
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
 	valid := 0
-	for scanner.Scan() {
-		str := scanner.Text()
+	util.ForEachLine("input.txt", func(str string) {
 		parts := strings.Split(str, ":")
 		rule := parseRule(parts[0])
 		pass := strings.TrimSpace(parts[1])
 		if checkPassword2(pass, rule) {
 			valid++
 		}
-	}
+	})
 	fmt.Println(valid)
 }
 
@@ -42,10 +34,10 @@ type Rule struct {
 func parseRule(rule string) Rule {
 	parts := strings.Split(rule, "-")
 	l, err := strconv.Atoi(parts[0])
-	check(err)
+	util.Check(err)
 	parts = strings.Split(parts[1], " ")
 	m, err := strconv.Atoi(parts[0])
-	check(err)
+	util.Check(err)
 	bytes := []byte(parts[1])
 	return Rule{l, m, bytes[0]}
 }
@@ -67,10 +59,4 @@ func checkPassword2(password string, rule Rule) bool {
 	first := rule.least <= len(password) && password[rule.least-1] == rule.letter
 	second := rule.most <= len(password) && password[rule.most-1] == rule.letter
 	return (first || second) && !(first && second)
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
