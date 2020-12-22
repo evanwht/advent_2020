@@ -8,11 +8,11 @@ import (
 )
 
 type (
-	instructionSet struct {
-		instructions []*instruction
+	InstructionSet struct {
+		instructions []*Instruction
 		accumulator  int
 	}
-	instruction struct {
+	Instruction struct {
 		op       operation
 		val      int
 		executed bool
@@ -27,40 +27,39 @@ const (
 )
 
 func main() {
-	//challenge1()
+	challenge1()
 	challenge2()
 }
 
 func challenge1() {
-	var instructions []*instruction
+	var instructions []*Instruction
 	util.ForEachLine("day_8/input.txt", func(str string) {
 		instructions = append(instructions, newInstruction(str))
 	})
-	set := instructionSet{
+	set := InstructionSet{
 		instructions: instructions,
 	}
 	fmt.Println(set.execute(0))
 }
 
-func (set *instructionSet) execute(i int) int {
+func (set *InstructionSet) execute(i int) (int, bool) {
 	if i >= len(set.instructions) {
-		return set.accumulator
+		return set.accumulator, true
 	}
 	inst := set.instructions[i]
 	if inst.executed {
-		return set.accumulator
+		return set.accumulator, false
 	}
 	inst.executed = true
 	switch inst.op {
 	case jmp:
-		set.execute(i+inst.val)
+		return set.execute(i+inst.val)
 	case acc:
 		set.accumulator += inst.val
-		set.execute(i+1)
+		return set.execute(i+1)
 	default:
-		set.execute(i+1)
+		return set.execute(i+1)
 	}
-	return set.accumulator
 }
 
 func newOp(str string) operation {
@@ -74,10 +73,10 @@ func newOp(str string) operation {
 	}
 }
 
-func newInstruction(str string) *instruction {
+func newInstruction(str string) *Instruction {
 	parts := strings.Split(str, " ")
 	n, _ := strconv.Atoi(parts[1])
-	return &instruction{
+	return &Instruction{
 		op:       newOp(parts[0]),
 		val:      n,
 		executed: false,
