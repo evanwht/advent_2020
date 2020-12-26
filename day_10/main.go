@@ -8,7 +8,29 @@ import (
 )
 
 func main() {
-	challenge1()
+	//challenge1()
+	challenge2()
+}
+
+func challenge2() {
+	var jolts []int
+	util.ForEachLine("day_10/test_input.txt", func(str string) {
+		n, _ := strconv.Atoi(str)
+		jolts = append(jolts, n)
+	})
+	sort.Ints(jolts)
+	combos := 1
+	for i := 0; i < len(jolts); i++ {
+		m, k := 0, 1
+		for (k+i) < len(jolts) && (jolts[k+i]-jolts[i]) <= 3 {
+			m++
+			k++
+		}
+		if m > 0 {
+			combos *= m
+		}
+	}
+	fmt.Println(combos)
 }
 
 func challenge1() {
