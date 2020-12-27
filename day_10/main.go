@@ -13,24 +13,26 @@ func main() {
 }
 
 func challenge2() {
-	var jolts []int
-	util.ForEachLine("day_10/test_input.txt", func(str string) {
+	jolts := []int{0}
+	util.ForEachLine("day_10/input.txt", func(str string) {
 		n, _ := strconv.Atoi(str)
 		jolts = append(jolts, n)
 	})
 	sort.Ints(jolts)
-	combos := 1
-	for i := 0; i < len(jolts); i++ {
-		m, k := 0, 1
-		for (k+i) < len(jolts) && (jolts[k+i]-jolts[i]) <= 3 {
-			m++
-			k++
+	combos := make(map[int]int)
+	combos[0] = 1
+	for i, j := range jolts {
+		if i < (len(jolts)-1) && jolts[i+1] <= j+3 {
+			combos[i+1] += combos[i]
 		}
-		if m > 0 {
-			combos *= m
+		if i < (len(jolts)-2) && jolts[i+2] <= j+3 {
+			combos[i+2] += combos[i]
+		}
+		if i < (len(jolts)-3) && jolts[i+3] <= j+3 {
+			combos[i+3] += combos[i]
 		}
 	}
-	fmt.Println(combos)
+	fmt.Println(combos[len(jolts)-1])
 }
 
 func challenge1() {
